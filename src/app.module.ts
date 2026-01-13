@@ -10,7 +10,10 @@ import * as process from 'node:process';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [`.env.${process.env.NODE_ENV || 'development'}.local`, '.env'],
+      envFilePath: [
+        `.env.${process.env.NODE_ENV || 'development'}.local`,
+        '.env',
+      ],
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -19,7 +22,7 @@ import * as process from 'node:process';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+      entities: [__dirname + '/../**/*.entity.js'],
       synchronize: true,
     }),
     UsersModule,
