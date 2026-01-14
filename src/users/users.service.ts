@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from './entity/users.entity';
+import { RegisterUserDto } from './dto/register.dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -11,15 +13,26 @@ export class UsersService {
   ) {}
 
   // 注册新用户
-  async registerUser(): Promise<string> {
-    const newUser = await this.usersRepository.create({
-      password: '123456',
-      nickname: 'John Doe',
-      email: 'johndoe@gmail.com',
-      avatar: 'avatar.png',
-      gender: 'male',
-      phone: '0123456789',
+  async registerUser(registerUserDto: RegisterUserDto): Promise<string> {
+    const registerEmail = await this.usersRepository.findOne({
+      where: { email: registerUserDto.email },
     });
+
+    if (registerEmail) {
+      throw new ConflictException('邮箱已经被注册');
+    }
+
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(
+      registerUserDto.password,
+      saltRounds,
+    );
+
+    const newUser = this.usersRepository.create({
+      email: registerUserDto.email,
+      password: hashedPassword,
+    });
+
     await this.usersRepository.save(newUser);
     return 'users registered';
   }
