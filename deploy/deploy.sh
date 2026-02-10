@@ -26,13 +26,34 @@ fi
 # ==========================================
 echo -e "${YELLOW}📦 安装必要软件...${NC}"
 apt-get update
-apt-get install -y curl git docker.io docker-compose
+
+# 卸载冲突的旧版本
+apt-get remove -y containerd docker.io docker-compose 2>/dev/null || true
+
+# 安装 Docker 依赖
+apt-get install -y ca-certificates curl gnupg lsb-release
+
+# 添加 Docker 官方 GPG key
+mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg 2>/dev/null
+
+# 添加 Docker 仓库
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# 安装 Docker
+apt-get update
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 # 启动 Docker
 systemctl start docker
 systemctl enable docker
 
 echo -e "${GREEN}✅ Docker 已安装${NC}"
+
+# 验证安装
+echo -e "${YELLOW}🔍 验证安装...${NC}"
+docker --version
+docker compose version
 
 # ==========================================
 # 步骤 2: 克隆或更新代码
