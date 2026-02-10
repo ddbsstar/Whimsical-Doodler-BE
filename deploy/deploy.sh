@@ -28,7 +28,7 @@ echo -e "${YELLOW}📦 安装必要软件...${NC}"
 apt-get update
 
 # 卸载冲突的旧版本
-apt-get remove -y containerd docker.io docker-compose 2>/dev/null || true
+apt-get remove -y containerd docker.io docker compose 2>/dev/null || true
 
 # 安装 Docker 依赖
 apt-get install -y ca-certificates curl gnupg lsb-release
@@ -42,7 +42,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 
 # 安装 Docker
 apt-get update
-apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+apt-get install -y docker-ce docker-ce-cli containerd.io docker compose-plugin
 
 # 启动 Docker
 systemctl start docker
@@ -99,7 +99,7 @@ echo -e "${GREEN}✅ 环境变量已配置${NC}"
 # 步骤 4: 构建和启动
 # ==========================================
 echo -e "${YELLOW}🐳 构建并启动 Docker 容器...${NC}"
-docker-compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker compose.prod.yml up -d --build
 
 echo -e "${GREEN}✅ 容器已启动${NC}"
 
@@ -166,8 +166,8 @@ echo -e "${GREEN}
 ║  健康检查: http://$DOMAIN/health             ║
 ╠════════════════════════════════════════════════╣
 ║  常用命令:                                    ║
-║    查看日志: docker-compose -f docker-compose.prod.yml logs -f
-║    重启服务: docker-compose -f docker-compose.prod.yml restart
-║    更新代码: git pull && docker-compose -f docker-compose.prod.yml up -d --build
+║    查看日志: docker compose -f docker compose.prod.yml logs -f
+║    重启服务: docker compose -f docker compose.prod.yml restart
+║    更新代码: git pull && docker compose -f docker compose.prod.yml up -d --build
 ╚════════════════════════════════════════════════╝
 ${NC}"
