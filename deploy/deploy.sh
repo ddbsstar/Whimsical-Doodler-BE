@@ -69,7 +69,7 @@ fi
 # 步骤 4: 构建和启动
 # ==========================================
 echo -e "${YELLOW}🐳 启动 Docker 容器...${NC}"
-docker-compose up -d --build
+docker-compose -f docker-compose.prod.yml up -d --build
 
 echo -e "${GREEN}✅ 容器已启动${NC}"
 
@@ -102,9 +102,9 @@ echo -e "${GREEN}
 ║  健康检查: https://$DOMAIN/health            ║
 ╠════════════════════════════════════════════════╣
 ║  常用命令:                                    ║
-║    查看日志: docker-compose logs -f app       ║
-║    重启服务: docker-compose restart app       ║
-║    更新代码: git pull && docker-compose up -d ║
+║    查看日志: docker-compose -f docker-compose.prod.yml logs -f app
+║    重启服务: docker-compose -f docker-compose.prod.yml restart
+║    更新代码: git pull && docker-compose -f docker-compose.prod.yml up -d --build
 ╚════════════════════════════════════════════════╝
 ${NC}"
 
