@@ -141,8 +141,8 @@ echo -e "${GREEN}
 ╔════════════════════════════════════════════════╗
 ║            部署完成！ ✅                        ║
 ╠════════════════════════════════════════════════╣
-║  API 地址: http://localhost:3000/api/v1      ║
-║  健康检查: http://localhost:3000/health      ║
+║  API 地址: http://$DOMAIN/api/v1             ║
+║  健康检查: http://$DOMAIN/health             ║
 ╠════════════════════════════════════════════════╣
 ║  常用命令:                                    ║
 ║    查看日志: docker-compose -f docker-compose.prod.yml logs -f
