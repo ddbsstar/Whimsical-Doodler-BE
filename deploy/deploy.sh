@@ -102,7 +102,7 @@ echo -e "  - 前端域名: $WEB_DOMAIN"
 # 步骤 4: 构建和启动
 # ==========================================
 echo -e "${YELLOW}🐳 构建并启动 Docker 容器...${NC}"
-docker compose -f docker compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml up -d --build
 
 echo -e "${GREEN}✅ 容器已启动${NC}"
 
@@ -119,20 +119,20 @@ if [ "$CONFIGURE_NGINX" = "y" ] || [ "$CONFIGURE_NGINX" = "Y" ]; then
     apt-get install -y nginx certbot python3-certbot-nginx
 
     # 配置 Nginx 反向代理
-    cat > /etc/nginx/sites-available/$DOMAIN.conf <<NGINX_EOF
+    cat > /etc/nginx/sites-available/$API_DOMAIN.conf <<NGINX_EOF
 server {
     listen 80;
-    server_name $DOMAIN www.$DOMAIN;
+    server_name $API_DOMAIN;
 
     return 301 https://\$server_name\$request_uri;
 }
 
 server {
     listen 443 ssl http2;
-    server_name $DOMAIN www.$DOMAIN;
+    server_name $API_DOMAIN;
 
-    ssl_certificate /etc/letsencrypt/live/$DOMAIN/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/$DOMAIN/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/$API_DOMAIN/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/$API_DOMAIN/privkey.pem;
 
     location / {
         proxy_pass http://localhost:3000;
@@ -145,12 +145,12 @@ server {
 }
 NGINX_EOF
 
-    ln -sf /etc/nginx/sites-available/$DOMAIN.conf /etc/nginx/sites-enabled/
+    ln -sf /etc/nginx/sites-available/$API_DOMAIN.conf /etc/nginx/sites-enabled/
     rm -f /etc/nginx/sites-enabled/default
     nginx -t
 
     # 获取 SSL 证书
-    certbot --nginx -d $DOMAIN -d www.$DOMAIN --email $EMAIL --agree-tos --non-interactive
+    certbot --nginx -d $API_DOMAIN --email $EMAIL --agree-tos --non-interactive
 
     # 自动续期
     echo "0 0 * * * root certbot renew --quiet" >> /etc/crontab
@@ -165,12 +165,12 @@ echo -e "${GREEN}
 ╔════════════════════════════════════════════════╗
 ║            部署完成！ ✅                        ║
 ╠════════════════════════════════════════════════╣
-║  API 地址: http://$DOMAIN/api/v1             ║
-║  健康检查: http://$DOMAIN/health             ║
+║  后端 API: https://$API_DOMAIN/api/v1        ║
+║  前端域名: https://$WEB_DOMAIN               ║
 ╠════════════════════════════════════════════════╣
 ║  常用命令:                                    ║
-║    查看日志: docker compose -f docker compose.prod.yml logs -f
-║    重启服务: docker compose -f docker compose.prod.yml restart
-║    更新代码: git pull && docker compose -f docker compose.prod.yml up -d --build
+║    查看日志: docker compose -f docker-compose.prod.yml logs -f
+║    重启服务: docker compose -f docker-compose.prod.yml restart
+║    更新代码: git pull && docker compose -f docker-compose.prod.yml up -d --build
 ╚════════════════════════════════════════════════╝
 ${NC}"
