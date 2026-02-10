@@ -79,21 +79,24 @@ fi
 # ==========================================
 echo -e "${YELLOW}⚙️ 配置环境变量...${NC}"
 
-read -p "请输入域名 (例如: api.example.com): " DOMAIN
+read -p "请输入域名 (例如: example.com): " BASE_DOMAIN
 read -p "请输入数据库密码: " DB_PASSWORD
 read -p "请输入 JWT 密钥 (至少32位): " JWT_SECRET
 
-# 创建 .env.production.local
+# 生成完整域名
+API_DOMAIN="api.$BASE_DOMAIN"
+WEB_DOMAIN="www.$BASE_DOMAIN"
+
+# 创建 .env.production.local（CORS 使用前端域名）
 cat > .env.production.local <<EOF
 DB_PASSWORD=$DB_PASSWORD
 JWT_SECRET=$JWT_SECRET
-CORS_ORIGINS=https://$DOMAIN
+CORS_ORIGINS=https://$WEB_DOMAIN
 EOF
 
-# 更新 nginx.conf 中的域名
-sed -i "s/your-domain.com/$DOMAIN/g" deploy/nginx.conf
-
 echo -e "${GREEN}✅ 环境变量已配置${NC}"
+echo -e "  - 后端域名: $API_DOMAIN"
+echo -e "  - 前端域名: $WEB_DOMAIN"
 
 # ==========================================
 # 步骤 4: 构建和启动
